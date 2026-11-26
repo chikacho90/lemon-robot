@@ -24,6 +24,14 @@
   button { justify-self: start; padding: 14px 24px; border: 0; border-radius: 10px; background: var(--lemon); color: #23511F; font: inherit; font-weight: 700; cursor: pointer; }
   button:disabled { opacity: .6; cursor: default; }
   .meta { font-size: 14px; color: var(--muted); }
+  .drop { border: 1.5px dashed var(--line); border-radius: 10px; padding: 12px 14px; font-size: 14px; color: var(--muted); }
+  .drop.over { border-color: var(--ink); }
+  .drop button { padding: 6px 12px; margin-right: 8px; font-size: 14px; background: var(--field); border: 1.5px solid var(--line); color: var(--ink); }
+  .shots { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .shots:empty { display: none; }
+  .shot { position: relative; }
+  .shot img { width: 96px; height: 72px; object-fit: cover; image-rendering: auto; margin: 0; border-radius: 6px; border: 1px solid var(--line); }
+  .shot button { position: absolute; top: -6px; right: -6px; width: 22px; height: 22px; padding: 0; margin: 0; border-radius: 50%; font-size: 13px; line-height: 20px; background: var(--ink); color: var(--bg); border: 0; }
   .done { margin-top: 28px; padding: 20px; border: 1.5px dashed var(--line); border-radius: 10px; }
   a { color: var(--ink); }
 </style>
@@ -32,9 +40,14 @@
 <main>
   <img src="../icon.png" alt="">
   <h1>레몬 로봇에게 한마디</h1>
-  <p>불편한 점, 고장, 바라는 기능 무엇이든 좋아요. 만든 사람의 개인 서버로 가고, 만든 사람만 읽어요.</p>
+  <p>불편한 점, 고장, 바라는 기능 무엇이든 좋아요.</p>
   <form id="f">
     <label>하고 싶은 말<textarea name="text" required maxlength="4000" placeholder="예: 허용 창이 안 떠요 / 펫으로 고양이도 있으면 좋겠어요"></textarea></label>
+    <div class="drop" id="drop">
+      <button type="button" id="pick">스크린샷 넣기</button>붙여넣기(⌘V)나 끌어다 놓기도 돼요 · 3장까지
+      <input type="file" id="file" accept="image/png,image/jpeg,image/webp,image/gif,image/heic" multiple hidden>
+      <div class="shots" id="shots"></div>
+    </div>
     <label>이름 <span class="meta">(선택, 답을 받고 싶으면)</span><input name="who" maxlength="80" autocomplete="name"></label>
     <button type="submit">보내기</button>
     <p class="meta" id="err" role="alert" style="color:#B4462B"></p>
@@ -47,12 +60,56 @@
   const info = { app: q.get('app') || '', code: q.get('code') || '', mac: q.get('mac') || '' };
   if (info.app) document.getElementById('ver').textContent = `앱 ${info.app} · 코드 ${info.code || '-'} · ${info.mac} 정보도 같이 보내요`;
   const f = document.getElementById('f');
+  // 스크린샷: 붙여넣기·파일 고르기·끌어다 놓기. 보내기 전에 긴 변 1600px JPEG 로 줄인다
+  const shots = [], box = document.getElementById('shots'), file = document.getElementById('file'), drop = document.getElementById('drop');
+  const err = m => document.getElementById('err').textContent = m;
+  function shrink(blob) {
+    return new Promise((ok, no) => {
+      const url = URL.createObjectURL(blob), im = new Image();
+      im.onload = () => {
+        const k = Math.min(1, 1600 / Math.max(im.naturalWidth, im.naturalHeight));
+        const c = document.createElement('canvas'); c.width = Math.round(im.naturalWidth * k); c.height = Math.round(im.naturalHeight * k);
+        const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(im, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url); ok(c.toDataURL('image/jpeg', 0.85));
+      };
+      im.onerror = () => { URL.revokeObjectURL(url); no(new Error('이 그림은 못 읽었어요. PNG나 JPG로 넣어 주세요')); };
+      im.src = url;
+    });
+  }
+  function draw() {
+    box.innerHTML = '';
+    shots.forEach((u, i) => {
+      const d = document.createElement('div'); d.className = 'shot';
+      const im = document.createElement('img'); im.src = u; im.alt = `스크린샷 ${i + 1}`;
+      const x = document.createElement('button'); x.type = 'button'; x.textContent = '×'; x.setAttribute('aria-label', '빼기');
+      x.onclick = () => { shots.splice(i, 1); draw(); };
+      d.append(im, x); box.append(d);
+    });
+  }
+  async function add(list) {
+    err('');
+    for (const b of list) {
+      if (!b.type.startsWith('image/')) continue;
+      if (shots.length >= 3) { err('스크린샷은 3장까지 넣을 수 있어요'); break; }
+      try { shots.push(await shrink(b)); } catch (e) { err(e.message); }
+    }
+    draw();
+  }
+  document.getElementById('pick').onclick = () => file.click();
+  file.onchange = () => { add([...file.files]); file.value = ''; };
+  document.addEventListener('paste', e => {
+    const imgs = [...(e.clipboardData?.items || [])].filter(i => i.kind === 'file' && i.type.startsWith('image/')).map(i => i.getAsFile());
+    if (imgs.length) { e.preventDefault(); add(imgs); }
+  });
+  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+  drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); add([...e.dataTransfer.files]); });
   f.addEventListener('submit', async e => {
     e.preventDefault();
     const b = f.querySelector('button'); b.disabled = true; b.textContent = '보내는 중…';
     try {
       const r = await fetch('https://lemonrobot.woo.moi/api', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: f.text.value, name: f.who.value, ...info }) });
+        body: JSON.stringify({ text: f.text.value, name: f.who.value, images: shots, ...info }) });
       const d = await r.json().catch(() => ({}));
       if (!r.ok || !d.ok) throw new Error(d.reason || '못 보냈어요. 잠시 뒤에 다시 해 주세요');
       f.hidden = true; document.getElementById('done').hidden = false;
