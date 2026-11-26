@@ -1,4 +1,5 @@
 #!/bin/bash
+# 줄바꿈은 LF여야 한다(.gitattributes). CRLF면 bash가 깨진다.
 # 레몬 로봇 설치(터미널 한 줄): curl -fsSL https://github.com/chikacho90/lemon-robot/releases/latest/download/install.sh | bash
 # 원본: woo-infra automations/mac9/lemondesk/dist/install.sh. 내려받기 페이지에서 짧은 주소로 쓰려고 여기에도 둔다(https://lemonrobot.interaction.hnine.com/install.sh).
 # 터미널로 받은 파일에는 격리 표시가 안 붙어서 'Apple이 확인할 수 없음' 창 없이 바로 열린다. 다시 돌리면 최신으로 바꿔 깐다.
