@@ -59,6 +59,8 @@
   .download svg { width: 18px; height: 18px; }
   .download.soon { background: transparent; color: var(--muted); border: 1.5px dashed var(--line); cursor: default; }
   .download.soon:hover { background: transparent; }
+  .download.alt { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+  .download.alt:hover { background: var(--lemon-soft); }
   .get { max-width: 640px; }
   .get .cmd { margin-top: 16px; }
   .get .meta { margin-top: 12px; }
@@ -195,7 +197,7 @@
   <div class="get">
       <div class="downloads">
         <button type="button" class="download" data-copy><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="9" height="9" rx="2"/><path d="M12 6V4.5A1.5 1.5 0 0 0 10.5 3h-6A1.5 1.5 0 0 0 3 4.5v6A1.5 1.5 0 0 0 4.5 12H6"/></svg><span>Mac 설치 명령 복사</span></button>
-        <span class="download soon" aria-disabled="true">Windows용은 곧 나와요</span>
+        <a class="download alt" href="#windows"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5v8.5M5.5 7.5 9 11l3.5-3.5M3 12.5v1.5a1.5 1.5 0 0 0 1.5 1.5h9a1.5 1.5 0 0 0 1.5-1.5v-1.5"/></svg>Windows용</a>
       </div>
       <div class="cmd"><code>curl -fsSL https://lemonrobot.interaction.hnine.com/install.sh | bash</code></div>
       <p class="meta"><b>터미널</b>을 열고 붙여 넣은 뒤 return을 누르면 끝이에요. 경고 창 없이 바로 켜져요.<br>터미널이 낯설면 <a href="https://github.com/chikacho90/lemon-robot/releases/latest/download/LemonRobot.dmg">DMG로 직접 받기</a>. 처음 열 때 한 번 '그래도 열기'를 눌러야 해요.</p>
@@ -275,6 +277,18 @@
     </ol>
   </section>
 
+  <section class="wrap install" id="windows">
+    <h2>Windows에서 쓰기</h2>
+    <ol>
+      <li><div><b>Lemon Desk 설정에서 '폰으로 보기'를 켜요.</b> 목장 사기까지 하려면 'AI 연결'도 켜요. Windows 10·11, Lemon Desk for Windows 2.2 이상이면 돼요.</div></li>
+      <li><div><b>설치 파일을 받아 열어요.</b> 관리자 권한은 필요 없어요.
+        <div class="downloads" style="margin-top:12px"><a class="download" href="https://github.com/chikacho90/lemon-robot/releases/latest/download/LemonRobot-Setup.exe"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5v8.5M5.5 7.5 9 11l3.5-3.5M3 12.5v1.5a1.5 1.5 0 0 0 1.5 1.5h9a1.5 1.5 0 0 0 1.5-1.5v-1.5"/></svg>Windows용 내려받기</a></div>
+        <p class="meta" style="margin-top:10px">처음 켤 때 'Windows의 PC 보호' 창이 뜨면 <b>추가 정보 > 실행</b>을 눌러요. 코드 서명 인증서가 없어서 그래요. 설치 파일에서만 한 번이에요.</p>
+        <p class="meta" style="margin-top:6px">경고 창 없이 깔려면 PowerShell에 한 줄을 붙여 넣어요.</p>
+        <div class="cmd"><code>irm https://github.com/chikacho90/lemon-robot/releases/latest/download/install.ps1 | iex</code><button type="button" data-copy-text="irm https://github.com/chikacho90/lemon-robot/releases/latest/download/install.ps1 | iex">복사</button></div></div></li>
+    </ol>
+  </section>
+
   <section class="wrap closing">
     <h2>과수원 걱정은 접어 두세요.</h2>
     <div class="get">
@@ -298,6 +312,10 @@
 
 <script>
   const CMD = 'curl -fsSL https://lemonrobot.interaction.hnine.com/install.sh | bash';
+  document.querySelectorAll('[data-copy-text]').forEach(b => b.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(b.dataset.copyText); b.textContent = '복사했어요'; } catch { b.textContent = '직접 복사해 주세요'; }
+    setTimeout(() => b.textContent = '복사', 2500);
+  }));
   document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', async () => {
     const t = b.querySelector('span') || b, was = t.textContent;
     try { await navigator.clipboard.writeText(CMD); t.textContent = '복사했어요. 터미널에 붙여 넣어요'; }
