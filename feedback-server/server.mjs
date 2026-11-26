@@ -21,7 +21,7 @@ fs.mkdirSync(DATA, { recursive: true });
 let owner = async () => false, loginUrl = next => `https://woo.moi/login?next=${encodeURIComponent(next)}`;
 try {
   const ws = await import('./woo-session.mjs');
-  const f = ws.isOwner || ws.verify || ws.session || ws.default;
+  const f = ws.isOwner || ws.verify || ws.session || ws.default || (ws.wooSession && (req => ws.wooSession(req.headers.cookie)));  // woo-projects 것은 wooSession(cookie)
   if (typeof f === 'function') owner = async req => { try { return Boolean(await f(req)); } catch { return false; } };
 } catch { console.warn('woo-session.mjs 없음: 보기 화면 닫힘'); }
 
