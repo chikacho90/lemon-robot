@@ -1,6 +1,6 @@
 <!doctype html>
 <!-- 레몬 로봇 '피드백 남기기'(로봇 메뉴)가 여는 곳. ?app=&code=&mac= 를 받아 같이 보낸다.
-     보내면 server.js 가 IX_DATA_DIR/feedback.jsonl 에 쌓고, 우만 /feedback/admin 에서 본다. -->
+     보내면 우의 개인서버 lemonrobot.woo.moi/api 로 간다(lemon-robot feedback-server/). 보기는 lemonrobot.woo.moi(woo.moi 로그인, 우만). -->
 <html lang="ko">
 <head>
 <meta charset="utf-8">
@@ -32,7 +32,7 @@
 <main>
   <img src="../icon.png" alt="">
   <h1>레몬 로봇에게 한마디</h1>
-  <p>불편한 점, 고장, 바라는 기능 무엇이든 좋아요. 만든 사람만 읽어요.</p>
+  <p>불편한 점, 고장, 바라는 기능 무엇이든 좋아요. 만든 사람의 개인 서버로 가고, 만든 사람만 읽어요.</p>
   <form id="f">
     <label>하고 싶은 말<textarea name="text" required maxlength="4000" placeholder="예: 허용 창이 안 떠요 / 펫으로 고양이도 있으면 좋겠어요"></textarea></label>
     <label>이름 <span class="meta">(선택, 답을 받고 싶으면)</span><input name="who" maxlength="80" autocomplete="name"></label>
@@ -51,7 +51,7 @@
     e.preventDefault();
     const b = f.querySelector('button'); b.disabled = true; b.textContent = '보내는 중…';
     try {
-      const r = await fetch('/feedback/api', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      const r = await fetch('https://lemonrobot.woo.moi/api', { method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: f.text.value, name: f.who.value, ...info }) });
       const d = await r.json().catch(() => ({}));
       if (!r.ok || !d.ok) throw new Error(d.reason || '못 보냈어요. 잠시 뒤에 다시 해 주세요');

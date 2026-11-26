@@ -1,7 +1,0 @@
-{
-  "name": "lemonrobot-site",
-  "private": true,
-  "description": "레몬 로봇 내려받기 페이지와 피드백 받기 (IX 앱 lemonrobot, Start: {{NODE}} server.js)",
-  "scripts": { "start": "node server.js" },
-  "engines": { "node": ">=20" }
-}
