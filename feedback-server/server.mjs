@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const DATA = process.env.DATA_DIR || path.join(HERE, 'data');
 const FILE = path.join(DATA, 'feedback.jsonl');
-const IMG = path.join(DATA, 'img');  // 피드백에 붙인 스크린샷(2026-11-26 우: 붙여넣기·파일 고르기). 한 건에 3장, 장당 3MB까지
+const IMG = path.join(DATA, 'img');  // 피드백에 붙인 스크린샷(2026-11-26 우: 붙여넣기·파일 고르기). 한 건에 10장, 장당 3MB까지
 const PORT = Number(process.env.PORT) || 8790;
 const ORIGINS = (process.env.ALLOW_ORIGIN || 'https://lemonrobot.interaction.hnine.com').split(',').map(s => s.trim());
 fs.mkdirSync(IMG, { recursive: true });
@@ -49,7 +49,7 @@ const clip = (v, n) => (typeof v === 'string' ? v.slice(0, n) : '');
 function receive(req, res) {
   const h = { ...cors(req) }, json = 'application/json';
   let body = '';
-  req.on('data', c => { body += c; if (body.length > 13e6) req.destroy(); });
+  req.on('data', c => { body += c; if (body.length > 42e6) req.destroy(); });
   req.on('end', () => {
     const ip = String(req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
     if (limited(ip)) return send(res, 429, JSON.stringify({ ok: false, reason: '잠시 뒤에 다시 보내 주세요' }), json, h);
@@ -59,7 +59,7 @@ function receive(req, res) {
     if (!text) return send(res, 400, JSON.stringify({ ok: false, reason: '내용을 적어 주세요' }), json, h);
     // 그림: data:image/(png|jpeg|webp);base64,... 만 받는다. 이름은 시각+순번이라 밖에서 경로를 못 고른다
     const images = [];
-    for (const [i, u] of (Array.isArray(d.images) ? d.images : []).slice(0, 3).entries()) {
+    for (const [i, u] of (Array.isArray(d.images) ? d.images : []).slice(0, 10).entries()) {
       const m = typeof u === 'string' && u.match(/^data:image\/(png|jpeg|webp);base64,([A-Za-z0-9+/=]+)$/);
       if (!m) continue;
       const buf = Buffer.from(m[2], 'base64');

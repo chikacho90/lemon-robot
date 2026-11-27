@@ -24,14 +24,19 @@
   button { justify-self: start; padding: 14px 24px; border: 0; border-radius: 10px; background: var(--lemon); color: #23511F; font: inherit; font-weight: 700; cursor: pointer; }
   button:disabled { opacity: .6; cursor: default; }
   .meta { font-size: 14px; color: var(--muted); }
-  .drop { border: 1.5px dashed var(--line); border-radius: 10px; padding: 12px 14px; font-size: 14px; color: var(--muted); }
-  .drop.over { border-color: var(--ink); }
-  .drop button { padding: 6px 12px; margin-right: 8px; font-size: 14px; background: var(--field); border: 1.5px solid var(--line); color: var(--ink); }
-  .shots { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  /* 글상자 안에 그림이 같이 들어가는 입력칸(2026-11-27 우: Claude 입력창처럼) */
+  .box { margin-top: 6px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--field); }
+  .box:focus-within { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .box.over { border-color: var(--ink); border-style: dashed; }
+  .box textarea { margin: 0; border: 0; border-radius: 12px; background: transparent; min-height: 140px; }
+  .box textarea:focus { outline: none; }
+  .shots { display: flex; flex-wrap: wrap; gap: 10px; padding: 12px 12px 0; }
   .shots:empty { display: none; }
   .shot { position: relative; }
-  .shot img { width: 96px; height: 72px; object-fit: cover; image-rendering: auto; margin: 0; border-radius: 6px; border: 1px solid var(--line); }
-  .shot button { position: absolute; top: -6px; right: -6px; width: 22px; height: 22px; padding: 0; margin: 0; border-radius: 50%; font-size: 13px; line-height: 20px; background: var(--ink); color: var(--bg); border: 0; }
+  .shot img { width: 112px; height: 84px; object-fit: cover; image-rendering: auto; margin: 0; border-radius: 10px; border: 1px solid var(--line); }
+  .shot button { position: absolute; top: -7px; right: -7px; width: 22px; height: 22px; padding: 0; border-radius: 50%; font-size: 13px; line-height: 20px; background: var(--ink); color: var(--bg); border: 0; }
+  .bar { display: flex; align-items: center; gap: 10px; padding: 0 10px 10px; font-size: 13px; font-weight: 400; color: var(--muted); }
+  .bar button { padding: 4px 12px; font-size: 14px; font-weight: 600; border-radius: 8px; background: transparent; border: 1.5px solid var(--line); color: var(--ink); }
   .done { margin-top: 28px; padding: 20px; border: 1.5px dashed var(--line); border-radius: 10px; }
   a { color: var(--ink); }
 </style>
@@ -42,11 +47,13 @@
   <h1>레몬 로봇에게 한마디</h1>
   <p>불편한 점, 고장, 바라는 기능 무엇이든 좋아요.</p>
   <form id="f">
-    <label>하고 싶은 말<textarea name="text" required maxlength="4000" placeholder="예: 허용 창이 안 떠요 / 펫으로 고양이도 있으면 좋겠어요"></textarea></label>
-    <div class="drop" id="drop">
-      <button type="button" id="pick">스크린샷 넣기</button>붙여넣기(⌘V)나 끌어다 놓기도 돼요 · 3장까지
-      <input type="file" id="file" accept="image/png,image/jpeg,image/webp,image/gif,image/heic" multiple hidden>
-      <div class="shots" id="shots"></div>
+    <div><label for="text">하고 싶은 말</label>
+      <div class="box" id="drop">
+        <div class="shots" id="shots"></div>
+        <textarea id="text" name="text" required maxlength="4000" placeholder="예: 허용 창이 안 떠요 / 펫으로 고양이도 있으면 좋겠어요"></textarea>
+        <div class="bar"><button type="button" id="pick">+ 스크린샷</button><span>붙여넣기(⌘V)나 끌어다 놓기도 돼요</span></div>
+        <input type="file" id="file" accept="image/png,image/jpeg,image/webp,image/gif,image/heic" multiple hidden>
+      </div>
     </div>
     <label>이름 <span class="meta">(선택, 답을 받고 싶으면)</span><input name="who" maxlength="80" autocomplete="name"></label>
     <button type="submit">보내기</button>
@@ -61,7 +68,7 @@
   if (info.app) document.getElementById('ver').textContent = `앱 ${info.app} · 코드 ${info.code || '-'} · ${info.mac} 정보도 같이 보내요`;
   const f = document.getElementById('f');
   // 스크린샷: 붙여넣기·파일 고르기·끌어다 놓기. 보내기 전에 긴 변 1600px JPEG 로 줄인다
-  const shots = [], box = document.getElementById('shots'), file = document.getElementById('file'), drop = document.getElementById('drop');
+  const MAX = 10, shots = [], box = document.getElementById('shots'), file = document.getElementById('file'), drop = document.getElementById('drop');
   const err = m => document.getElementById('err').textContent = m;
   function shrink(blob) {
     return new Promise((ok, no) => {
@@ -90,7 +97,7 @@
     err('');
     for (const b of list) {
       if (!b.type.startsWith('image/')) continue;
-      if (shots.length >= 3) { err('스크린샷은 3장까지 넣을 수 있어요'); break; }
+      if (shots.length >= MAX) { err(`스크린샷은 ${MAX}장까지 넣을 수 있어요`); break; }
       try { shots.push(await shrink(b)); } catch (e) { err(e.message); }
     }
     draw();
