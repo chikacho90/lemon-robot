@@ -61,7 +61,7 @@
   .download.soon:hover { background: transparent; }
   .download.alt { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
   .download.alt:hover { background: var(--lemon-soft); }
-  .get { max-width: 640px; }
+  .get { max-width: 700px; }  /* 복사 버튼과 curl 한 줄이 같이 들어가게 */
   .get .cmd { margin-top: 16px; }
   .get .meta { margin-top: 12px; }
   .hero .spec { margin-top: 20px; }
@@ -196,11 +196,12 @@
   <p class="lead">레몬 로봇은 Lemon Desk 띠 왼쪽 끝에 서서 과수원을 대신 돌봐요. 5분마다 창고를 팔고, 10분마다 지금 사면 가장 빨리 본전을 뽑는 업그레이드를 골라 사요. 일할 땐 드론으로 변신해 날아가요.</p>
   <div class="get">
       <div class="downloads">
-        <button type="button" class="download" data-copy><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="9" height="9" rx="2"/><path d="M12 6V4.5A1.5 1.5 0 0 0 10.5 3h-6A1.5 1.5 0 0 0 3 4.5v6A1.5 1.5 0 0 0 4.5 12H6"/></svg><span>Mac 설치 명령 복사</span></button>
+        <a class="download" href="https://github.com/chikacho90/lemon-robot/releases/latest/download/LemonRobot.dmg"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5v8.5M5.5 7.5 9 11l3.5-3.5M3 12.5v1.5a1.5 1.5 0 0 0 1.5 1.5h9a1.5 1.5 0 0 0 1.5-1.5v-1.5"/></svg><span>Mac용 내려받기</span></a>
         <a class="download alt" href="#windows"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5v8.5M5.5 7.5 9 11l3.5-3.5M3 12.5v1.5a1.5 1.5 0 0 0 1.5 1.5h9a1.5 1.5 0 0 0 1.5-1.5v-1.5"/></svg>Windows용</a>
       </div>
-      <div class="cmd"><code>curl -fsSL https://lemonrobot.interaction.hnine.com/install.sh | bash</code></div>
-      <p class="meta"><b>터미널</b>을 열고 붙여 넣은 뒤 return을 누르면 끝이에요. 경고 창 없이 바로 켜져요.<br>터미널이 낯설면 <a href="https://github.com/chikacho90/lemon-robot/releases/latest/download/LemonRobot.dmg">DMG로 직접 받기</a>. 처음 열 때 한 번 '그래도 열기'를 눌러야 해요.</p>
+      <p class="meta">DMG를 열고 Lemon Robot을 응용 프로그램으로 끌어 놓으면 끝이에요. 처음 열 때 경고 창이 뜨면 <b>완료</b>를 누른 뒤 시스템 설정 > 개인정보 보호 및 보안 맨 아래에서 '그래도 열기'를 눌러요.</p>
+      <p class="meta">터미널이 편하면 이 한 줄로도 깔려요. 경고 창 없이 바로 켜져요.</p>
+      <div class="cmd"><code>curl -fsSL https://lemonrobot.interaction.hnine.com/install.sh | bash</code><button type="button" data-copy>복사</button></div>
     </div>
   <p class="meta spec">무료 · macOS 13 이상 · Apple Silicon과 Intel Mac · Lemon Desk 2.0 이상</p>
 </header>
@@ -270,9 +271,11 @@
     <h2>세 단계면 끝</h2>
     <ol>
       <li><div><b>Lemon Desk 설정에서 '폰으로 보기'를 켜요.</b> 폰은 없어도 되고 QR을 찍을 필요도 없어요. 이걸 켜야 게임이 연결 키를 만들어요.</div></li>
-      <li><div><b>터미널에 한 줄을 붙여 넣어요.</b> 터미널은 Spotlight(⌘ 스페이스)에서 '터미널'을 찾으면 있어요. 받아서 응용 프로그램에 넣고 바로 켜 줘요. 다시 붙여 넣으면 최신으로 바꿔 깔아요.
-        <div class="cmd"><code>curl -fsSL https://lemonrobot.interaction.hnine.com/install.sh | bash</code><button type="button" data-copy>복사</button></div>
-        <p class="meta" style="margin-top:10px">DMG로 받았다면 응용 프로그램으로 끌어 놓고, 처음 열 때 경고 창이 뜨면 <b>완료</b>를 누른 뒤 시스템 설정 > 개인정보 보호 및 보안 맨 아래에서 '그래도 열기'를 눌러요.</p></div></li>
+      <li><div><b>DMG를 받아 Lemon Robot을 응용 프로그램으로 끌어 놓아요.</b>
+        <div class="downloads" style="margin-top:12px"><a class="download" href="https://github.com/chikacho90/lemon-robot/releases/latest/download/LemonRobot.dmg"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5v8.5M5.5 7.5 9 11l3.5-3.5M3 12.5v1.5a1.5 1.5 0 0 0 1.5 1.5h9a1.5 1.5 0 0 0 1.5-1.5v-1.5"/></svg>Mac용 내려받기</a></div>
+        <p class="meta" style="margin-top:10px">처음 열 때 경고 창이 뜨면 <b>완료</b>를 누른 뒤 시스템 설정 > 개인정보 보호 및 보안 맨 아래에서 '그래도 열기'를 눌러요. 처음 한 번만이에요.</p>
+        <p class="meta" style="margin-top:6px">경고 창 없이 깔려면 터미널에 한 줄을 붙여 넣어요. 터미널은 Spotlight(⌘ 스페이스)에서 '터미널'을 찾으면 있어요. 다시 붙여 넣으면 최신으로 바꿔 깔아요.</p>
+        <div class="cmd"><code>curl -fsSL https://lemonrobot.interaction.hnine.com/install.sh | bash</code><button type="button" data-copy>복사</button></div></div></li>
       <li><div><b>'다른 앱의 데이터에 접근' 창에서 허용을 눌러요.</b> 띠 왼쪽 끝에 로봇이 보이면 끝이에요. 다음부터는 로그인할 때 저절로 켜져요.</div></li>
     </ol>
   </section>
@@ -293,11 +296,12 @@
     <h2>과수원 걱정은 접어 두세요.</h2>
     <div class="get">
       <div class="downloads">
-        <button type="button" class="download" data-copy><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="9" height="9" rx="2"/><path d="M12 6V4.5A1.5 1.5 0 0 0 10.5 3h-6A1.5 1.5 0 0 0 3 4.5v6A1.5 1.5 0 0 0 4.5 12H6"/></svg><span>Mac 설치 명령 복사</span></button>
-        
+        <a class="download" href="https://github.com/chikacho90/lemon-robot/releases/latest/download/LemonRobot.dmg"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5v8.5M5.5 7.5 9 11l3.5-3.5M3 12.5v1.5a1.5 1.5 0 0 0 1.5 1.5h9a1.5 1.5 0 0 0 1.5-1.5v-1.5"/></svg><span>Mac용 내려받기</span></a>
+        <a class="download alt" href="#windows"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5v8.5M5.5 7.5 9 11l3.5-3.5M3 12.5v1.5a1.5 1.5 0 0 0 1.5 1.5h9a1.5 1.5 0 0 0 1.5-1.5v-1.5"/></svg>Windows용</a>
       </div>
-      <div class="cmd"><code>curl -fsSL https://lemonrobot.interaction.hnine.com/install.sh | bash</code></div>
-      <p class="meta"><b>터미널</b>을 열고 붙여 넣은 뒤 return을 누르면 끝이에요. 경고 창 없이 바로 켜져요.<br>터미널이 낯설면 <a href="https://github.com/chikacho90/lemon-robot/releases/latest/download/LemonRobot.dmg">DMG로 직접 받기</a>. 처음 열 때 한 번 '그래도 열기'를 눌러야 해요.</p>
+      <p class="meta">DMG를 열고 Lemon Robot을 응용 프로그램으로 끌어 놓으면 끝이에요. 처음 열 때 경고 창이 뜨면 <b>완료</b>를 누른 뒤 시스템 설정 > 개인정보 보호 및 보안 맨 아래에서 '그래도 열기'를 눌러요.</p>
+      <p class="meta">터미널이 편하면 이 한 줄로도 깔려요. 경고 창 없이 바로 켜져요.</p>
+      <div class="cmd"><code>curl -fsSL https://lemonrobot.interaction.hnine.com/install.sh | bash</code><button type="button" data-copy>복사</button></div>
     </div>
     <p class="meta" style="margin-top:16px">Mac이 잠들면 쉬어요. 화면만 꺼진 건 괜찮아요.</p>
   </section>
